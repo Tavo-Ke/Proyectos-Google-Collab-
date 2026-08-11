@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lienzo Matemático: Sistema de Ecuaciones</title>
+    <!-- Tailwind CSS para diseño rápido -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- Chart.js para la gráfica -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- MathJax para renderizar LaTeX perfectamente -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://jsdelivr.net"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6 font-sans">
+
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">
+            Resolución Completa de Sistemas de Ecuaciones
+        </h1>
+
+        <!-- El Lienzo (Canvas) Dividido en 2 Columnas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            
+            <!-- PANEL IZQUIERDO: Gráfica Interactiva -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">Representación geométrica</h2>
+                <div class="relative w-full aspect-square">
+                    <canvas id="canvasGrafica"></canvas>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: Canvas de Desarrollo LaTeX -->
+            <div class="bg-amber-50/30 p-6 rounded-lg border border-amber-200/60 shadow-inner h-full text-gray-800 text-[15px] leading-relaxed">
+                <!-- El contenido de este div se procesa mediante MathJax usando sintaxis LaTeX limpia -->
+                <div>
+                    <p class="font-bold text-amber-900 mb-2">1. Sistema de Ecuaciones:</p>
+                    $$\begin{cases} \text{(I) }\, 3x + y = 9 \\ \text{(II) }\, x + 2y = 8 \end{cases}$$
+                    
+                    <p class="font-bold text-amber-900 mt-4 mb-2">2. Despejando $y$ en (I):</p>
+                    $$y = 9 - 3x$$
+                    
+                    <p class="font-bold text-amber-900 mt-4 mb-2">3. Sustituyendo $y$ en (II):</p>
+                    $$x + 2(9 - 3x) = 8$$
+                    $$x + 18 - 6x = 8$$
+                    $$-5x = 8 - 18$$
+                    $$-5x = -10 \implies \mathbf{x = 2}$$
+                    
+                    <p class="font-bold text-amber-900 mt-4 mb-2">4. Calculando $y$:</p>
+                    $$y = 9 - 3(2)$$
+                    $$y = 9 - 6 \implies \mathbf{y = 3}$$
+                    
+                    <p class="font-bold text-emerald-800 mt-5 pt-2 border-t border-amber-200/60">Conjunto Solución:</p>
+                    $$\mathbf{S = \{(2, 3)\}}$$
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- LÓGICA DE JAVASCRIPT PARA LA GRÁFICA -->
+    <script>
+        // 1. Generar los puntos numéricos para las rectas lineales
+        const xValores = [];
+        const yEcuacion1 = [];
+        const yEcuacion2 = [];
+
+        for (let x = 0; x <= 5; x += 0.5) {
+            xValores.push(x);
+            yEcuacion1.push(9 - 3 * x);       // Despeje de 3x + y = 9 -> y = 9 - 3x
+            yEcuacion2.push((8 - x) / 2);     // Despeje de x + 2y = 8 -> y = (8 - x) / 2
+        }
+
+        // 2. Inicializar la gráfica con Chart.js en el Canvas
+        const ctx = document.getElementById('canvasGrafica').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xValores,
+                datasets: [
+                    {
+                        label: '3x + y = 9',
+                        data: yEcuacion1,
+                        borderColor: '#1f77b4',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 0 // Oculta los puntos individuales de la línea
+                    },
+                    {
+                        label: 'x + 2y = 8',
+                        data: yEcuacion2,
+                        borderColor: '#ff7f0e',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Solución (2, 3)',
+                        data: [{x: 2, y: 3}], // Coordenada exacta de la solución
+                        borderColor: '#dc2626',
+                        backgroundColor: '#dc2626',
+                        pointRadius: 7,       // Punto rojo grande destacado
+                        showLine: false       // Que no dibuje línea para este set
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        min: 0,
+                        max: 5,
+                        title: { display: true, text: 'Eje X', font: { weight: 'bold' } }
+                    },
+                    y: {
+                        min: 0,
+                        max: 10,
+                        title: { display: true, text: 'Eje Y', font: { weight: 'bold' } }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { size: 12 } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
